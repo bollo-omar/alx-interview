@@ -1,25 +1,33 @@
 #!/usr/bin/python3
+"""
+This is a module that provides a function for determining if all
+boxes in a given list can be opened.
+"""
+
+
 def canUnlockAll(boxes):
     """
-The 'canUnlockAll' function determines if all the boxes can be opened.
-It performs a breadth-first search (BFS) starting from the initial box (box 0).
-Each box is represented as a list of keys that can open other boxes.
-The function uses a 'visited' list to track the visited boxes.
-The BFS explores each box and marks them as visited if a key opens a new box.
-If all boxes have been visited, the function returns True.
-Otherwise, it returns False if there is at least one unvisited box.
-"""
+    This function takes a list of lists and returns a boolean indicating
+        whether all boxes in the list can be opened. A key with the same
+        number as a box opens that box. You can assume all keys will be
+        positive integers. There can be keys that do not have boxes.
+        The first box boxes[0] is unlocked.
+
+    Parameters:
+    boxes (List[List[int]]): The list of lists representing the boxes
+        and their keys.
+
+    Returns:
+    bool: True if all boxes can be opened, else False.
+    """
     n = len(boxes)
-    visited = [False] * n
-    visited[0] = True
-    queue = [0]
-
-    while queue:
-        curr_box = queue.pop(0)
-        
-        for key in boxes[curr_box]:
-            if key < n and not visited[key]:
-                visited[key] = True
-                queue.append(key)
-
-    return all(visited)
+    seen_boxes = set([0])
+    unseen_boxes = set(boxes[0]).difference(set([0]))
+    while len(unseen_boxes) > 0:
+        boxIdx = unseen_boxes.pop()
+        if not boxIdx or boxIdx >= n or boxIdx < 0:
+            continue
+        if boxIdx not in seen_boxes:
+            unseen_boxes = unseen_boxes.union(boxes[boxIdx])
+            seen_boxes.add(boxIdx)
+    return n == len(seen_boxes)
